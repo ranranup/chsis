@@ -1,0 +1,100 @@
+h4, h5, h6,
+h1, h2, h3 {margin-top: 0;}
+ul, ol {margin: 0;}
+p {margin: 0;}
+html, body{
+   font-family: 'Source Sans Pro', sans-serif;
+   font-size: 100%;
+   background:#fff; 
+}
+a {
+    cursor: pointer;
+}
+.main {
+    background-color: white;
+    border: 1px solid #d6dde7;
+    margin: 0 auto;
+    position: relative;
+    width: 85.5%;
+    z-index: 1000;
+}
+.nowlocation {
+    background-color: #e5eaf0;
+    height: 40px;
+}
+.nowlocation a {
+    color: #930;
+    font-family: Verdana,Geneva,sans-serif;
+    font-size: 15px;
+    font-weight: bolder;
+    line-height: 40px;
+    margin-left: 27px;
+    text-align: center;
+    text-decoration: none;
+}
+.nowlocation a:hover {
+    color: #000;
+    font-size: 16px;
+}
+.news_list {
+    margin: 0 auto;
+    min-height:330px;
+}
+.news_list ul {
+    list-style: outside none none;
+}
+.news_list li {
+    background-image: url("../../image/chsis/fuhao.gif");
+    background-position: 5px 50%;
+    background-repeat: no-repeat;
+    border-bottom: 1px dotted #dbdcde;
+    height: 40px;
+    line-height: 40px;
+    margin: 0 0 0 -15px;
+    padding: 0;
+    position: relative;
+    text-indent: 10px;
+    width: 100%;
+}
+.news_list li a {
+    color: #000000;
+    display: inline-block;
+    font-family: "微软雅黑";
+    font-size: 15px;
+    margin-left: 10px;
+    max-width: 800px;
+    overflow: hidden;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: keep-all;
+}
+.news_list li a:hover {
+    color: #930;
+    font-size: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: keep-all;
+}
+.news_list li img {
+    height: 12px;
+    position: absolute;
+    top: 15px;
+    width: 17px;
+}
+.news_list li span {
+    color: #919497;
+    font-family: Georgia;
+    font-size: 16px;
+    position: absolute;
+    right: 10px;
+    text-decoration: none;
+    top: 0;
+}
+.pagebreakbox {
+    height: 28px;
+    margin: 0 auto;
+    text-align: center;
+    width: 996px;
+}

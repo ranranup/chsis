@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.ResidentMapper" >
+  <resultMap id="BaseResultMap" type="top.chsis.model.Resident" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="idNo" property="idNo" jdbcType="VARCHAR" />
+    <result column="nation" property="nation" jdbcType="VARCHAR" />
+    <result column="birth" property="birth" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="period" property="period" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="marriage" property="marriage" jdbcType="INTEGER" />
+    <result column="height" property="height" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="VARCHAR" />
+    <result column="eyesight" property="eyesight" jdbcType="VARCHAR" />
+    <result column="bloodType" property="bloodType" jdbcType="INTEGER" />
+    <association column="family_uuid" property="family" select="top.chsis.dao.FamilyMapper.selectByPrimaryKey" />
+  </resultMap>
+  
+  <resultMap id="ResidentVOResultMap" type="top.chsis.vo.ResidentVO" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="idNo" property="idNo" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="familyNumber" property="familyNumber" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    uuid, userName, password, name, sex, idNo, nation, birth, age, period, phone, marriage, 
+    height, weight, eyesight, bloodType, family_uuid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_resident
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_resident
+  </select>
+  
+  <select id="selectResidentsByFamilyUUID" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_resident
+    where family_uuid = #{familyUUID,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByDimIdNo" resultMap="ResidentVOResultMap" parameterType="java.lang.String" >
+    select 
+    uuid, userName, name, sex, idNo, phone
+    from t_resident
+    where idNo LIKE CONCAT('%', #{idNo},'%' )
+  </select>
+  
+  <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_resident
+    where userName = #{userName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByIdNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_resident
+    where idNo = #{idNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCondition" resultMap="ResidentVOResultMap" parameterType="top.chsis.vo.ResidentVO" >
+    select r.uuid, r.userName, r.name, r.sex, r.phone, r.idNo, f.number familyNumber from t_resident r, t_family f
+    where 1=1
+    <if test="userName!=null and userName!=''">
+		and r.userName LIKE CONCAT('%', #{userName},'%' )
+	</if>
+    <if test="name!=null and name!=''">
+		and r.name LIKE CONCAT('%', #{name},'%' )
+	</if>
+    <if test="sex!=null and sex!=''">
+		and r.sex LIKE CONCAT('%', #{sex},'%' )
+	</if>
+    <if test="idNo!=null and idNo!=''">
+		and r.idNo LIKE CONCAT('%', #{idNo},'%' )
+	</if>
+    <if test="familyNumber!=null and familyNumber!=''">
+		and f.number LIKE CONCAT('%', #{familyNumber},'%' )
+	</if>
+	and r.family_uuid = f.uuid
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_resident
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="top.chsis.model.Resident" >
+    insert into t_resident (uuid, userName, password, 
+      name, sex, idNo, nation, 
+      birth, age, period, 
+      phone, marriage, height, 
+      weight, eyesight, bloodType, 
+      family_uuid)
+    values (#{uuid,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{idNo,jdbcType=VARCHAR}, #{nation,jdbcType=VARCHAR}, 
+      #{birth,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, #{period,jdbcType=INTEGER}, 
+      #{phone,jdbcType=VARCHAR}, #{marriage,jdbcType=INTEGER}, #{height,jdbcType=VARCHAR}, 
+      #{weight,jdbcType=VARCHAR}, #{eyesight,jdbcType=VARCHAR}, #{bloodType,jdbcType=INTEGER}, 
+      #{family.uuid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="top.chsis.model.Resident" >
+    insert into t_resident
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="userName != null" >
+        userName,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="idNo != null" >
+        idNo,
+      </if>
+      <if test="nation != null" >
+        nation,
+      </if>
+      <if test="birth != null" >
+        birth,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="period != null" >
+        period,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="marriage != null" >
+        marriage,
+      </if>
+      <if test="height != null" >
+        height,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="eyesight != null" >
+        eyesight,
+      </if>
+      <if test="bloodType != null" >
+        bloodType,
+      </if>
+      <if test="family != null" >
+        family_uuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="idNo != null" >
+        #{idNo,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null" >
+        #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="birth != null" >
+        #{birth,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="period != null" >
+        #{period,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="marriage != null" >
+        #{marriage,jdbcType=INTEGER},
+      </if>
+      <if test="height != null" >
+        #{height,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="eyesight != null" >
+        #{eyesight,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodType != null" >
+        #{bloodType,jdbcType=INTEGER},
+      </if>
+      <if test="family != null" >
+        #{family.uuid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.Resident" >
+    update t_resident
+    <set >
+      <if test="userName != null" >
+        userName = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="idNo != null" >
+        idNo = #{idNo,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null" >
+        nation = #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="birth != null" >
+        birth = #{birth,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="period != null" >
+        period = #{period,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="marriage != null" >
+        marriage = #{marriage,jdbcType=INTEGER},
+      </if>
+      <if test="height != null" >
+        height = #{height,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="eyesight != null" >
+        eyesight = #{eyesight,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodType != null" >
+        bloodType = #{bloodType,jdbcType=INTEGER},
+      </if>
+      <if test="family != null" >
+        family_uuid = #{family.uuid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.Resident" >
+    update t_resident
+    set userName = #{userName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      idNo = #{idNo,jdbcType=VARCHAR},
+      nation = #{nation,jdbcType=VARCHAR},
+      birth = #{birth,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      period = #{period,jdbcType=INTEGER},
+      phone = #{phone,jdbcType=VARCHAR},
+      marriage = #{marriage,jdbcType=INTEGER},
+      height = #{height,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=VARCHAR},
+      eyesight = #{eyesight,jdbcType=VARCHAR},
+      bloodType = #{bloodType,jdbcType=INTEGER},
+      family_uuid = #{family.uuid,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="removeMemberByPrimaryKey" parameterType="java.lang.String" >
+    update t_resident
+    set family_uuid = ''
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

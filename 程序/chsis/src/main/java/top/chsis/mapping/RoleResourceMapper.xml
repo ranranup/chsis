@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.IRoleResourceMapper" >
+  <resultMap id="BaseResultMap" type="top.chsis.model.RoleResource" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <association column="roleUuid" property="role" select="top.chsis.dao.IRoleMapper.selectByPrimaryKey"></association>
+    <association column="resourceUuid" property="resource" select="top.chsis.dao.IResourceMapper.selectByPrimaryKey"></association>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    uuid, roleUuid, resourceUuid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role_resource
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role_resource
+  </select>
+  
+  <select id="selectByRoleUuid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role_resource
+    where roleUuid = #{roleUuid,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_role_resource
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteBatchByUuid" parameterType="java.lang.String" >
+		delete from t_role_resource where uuid in
+  		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+    		#{item,jdbcType=VARCHAR}
+		</foreach>
+  </delete>
+  
+  <insert id="insert" parameterType="top.chsis.model.RoleResource" >
+    insert into t_role_resource (uuid, roleUuid, resourceUuid)
+    values (#{uuid,jdbcType=VARCHAR}, #{role.uuid,jdbcType=VARCHAR}, #{resource.uuid,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertBatch" parameterType="java.util.List">
+		insert into t_role_resource (uuid, roleUuid, resourceUuid) values
+		<foreach collection="list" item="item" index="index" separator="," >  
+			(#{item.uuid},#{item.roleUuid},#{item.resourceUuid})
+		</foreach>
+  </insert>
+  
+  <insert id="insertSelective" parameterType="top.chsis.model.RoleResource" >
+    insert into t_role_resource
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="roleuuid != null" >
+        roleUuid,
+      </if>
+      <if test="resourceuuid != null" >
+        resourceUuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="roleuuid != null" >
+        #{role.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceuuid != null" >
+        #{resource.uuid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.RoleResource" >
+    update t_role_resource
+    <set >
+      <if test="roleuuid != null" >
+        roleUuid = #{role.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceuuid != null" >
+        resourceUuid = #{resource.uuid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.RoleResource" >
+    update t_role_resource
+    set roleUuid = #{role.uuid,jdbcType=VARCHAR},
+      resourceUuid = #{resource.uuid,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

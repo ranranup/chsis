@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.IUserRoleMapper" >
+  <resultMap id="BaseResultMap" type="top.chsis.model.UserRole" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="userUuid" property="userUuid" jdbcType="VARCHAR" />
+    <association column="roleUuid" property="role" select="top.chsis.dao.IRoleMapper.selectByPrimaryKey"></association>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    uuid, userUuid, roleUuid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_user_role
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectRolesByUserUuid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_user_role
+    where userUuid = #{userUuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCommonRolesByUserUuid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select t_user_role.* from t_user_role, t_role
+    where 
+    t_user_role.roleUuid = t_role.uuid
+    and t_role.description != '%SystemRole%'
+    and t_user_role.userUuid = #{managerUuid,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_user_role
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteBatchByUuid" parameterType="java.lang.String" >
+		delete from t_user_role where uuid in
+  		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+    		#{item,jdbcType=VARCHAR}
+		</foreach>
+  </delete>
+  
+  <insert id="insert" parameterType="top.chsis.model.UserRole" >
+    insert into t_user_role (uuid, userUuid, roleUuid
+      )
+    values (#{uuid,jdbcType=VARCHAR}, #{userUuid,jdbcType=VARCHAR}, #{role.uuid,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertBatch" parameterType="java.util.List" >
+    insert into t_user_role (uuid, userUuid, roleUuid) values
+   		<foreach collection="list" item="item" index="index" separator="," >  
+		    (#{item.uuid,jdbcType=VARCHAR}, #{item.userUuid,jdbcType=VARCHAR}, #{item.role.uuid,jdbcType=VARCHAR})
+		</foreach>
+  </insert>
+  
+  <insert id="insertBatchByUserRoleVO" parameterType="java.util.List" >
+    insert into t_user_role (uuid, userUuid, roleUuid) values
+   		<foreach collection="list" item="item" index="index" separator="," >  
+		    (#{item.uuid,jdbcType=VARCHAR}, #{item.userUuid,jdbcType=VARCHAR}, #{item.roleUuid,jdbcType=VARCHAR})
+		</foreach>
+  </insert>
+  
+  <insert id="insertSelective" parameterType="top.chsis.model.UserRole" >
+    insert into t_user_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="userUuid != null" >
+        userUuid,
+      </if>
+      <if test="role.uuid != null" >
+        roleUuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="userUuid != null" >
+        #{userUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="role.uuid != null" >
+        #{role.uuid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.UserRole" >
+    update t_user_role
+    <set >
+      <if test="userUuid != null" >
+        userUuid = #{userUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="role.uuid != null" >
+        roleUuid = #{role.uuid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.UserRole" >
+    update t_user_role
+    set userUuid = #{userUuid,jdbcType=VARCHAR},
+      roleUuid = #{role.uuid,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

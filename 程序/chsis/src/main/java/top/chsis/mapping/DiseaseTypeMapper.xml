@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.DiseaseTypeMapper" >
+  <resultMap id="BaseResultMap" type="top.chsis.model.DiseaseType" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="parentTypeUuid" property="parentTypeUuid" jdbcType="VARCHAR" />
+    <result column="last" property="last" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    uuid, name, level, parentTypeUuid, last
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_diseasetype
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByLevel" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_diseasetype
+    where level = #{level,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByParentDiseaseType" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_diseasetype
+    where parentTypeUuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_diseasetype
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_diseasetype
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="top.chsis.model.DiseaseType" >
+    insert into t_diseasetype (uuid, name, level, 
+      parentTypeUuid, last)
+    values (#{uuid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
+      #{parentTypeUuid,jdbcType=VARCHAR}, #{last,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="top.chsis.model.DiseaseType" >
+    insert into t_diseasetype
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="level != null" >
+        level,
+      </if>
+      <if test="parentTypeUuid != null" >
+        parentTypeUuid,
+      </if>
+      <if test="last != null" >
+        last,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="parentTypeUuid != null" >
+        #{parentTypeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="last != null" >
+        #{last,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.DiseaseType" >
+    update t_diseasetype
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="parentTypeUuid != null" >
+        parentTypeUuid = #{parentTypeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="last != null" >
+        last = #{last,jdbcType=INTEGER},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.DiseaseType" >
+    update t_diseasetype
+    set name = #{name,jdbcType=VARCHAR},
+      level = #{level,jdbcType=INTEGER},
+      parentTypeUuid = #{parentTypeUuid,jdbcType=VARCHAR},
+      last = #{last,jdbcType=INTEGER}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

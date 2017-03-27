@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.MedicalRecordMapper" >
+  <resultMap id="BaseResultMap" type="top.chsis.model.MedicalRecord" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="result" property="result" jdbcType="LONGVARCHAR" />
+    <association column="patient_uuid" property="patient" select="top.chsis.dao.ResidentMapper.selectByPrimaryKey" jdbcType="VARCHAR" />
+    <association column="doctor_uuid" property="doctor" select="top.chsis.dao.DoctorMapper.selectByPrimaryKey" jdbcType="VARCHAR" />
+    <association column="disease" property="disease" select="top.chsis.dao.DiseaseMapper.selectByPrimaryKey" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <resultMap id="MedicalRecordVOResultMap" type="top.chsis.vo.MedicalRecordVO" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="idNo" property="idNo" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="result" property="result" jdbcType="VARCHAR" />
+    <association column="disease" property="disease" select="top.chsis.dao.DiseaseMapper.selectByPrimaryKey" jdbcType="VARCHAR" />
+    <association column="patient_uuid" property="patient" select="top.chsis.dao.ResidentMapper.selectByPrimaryKey" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="PieResultMap" type="top.chsis.vo.PiePair" >
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="value" property="value" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    uuid, patient_uuid, time, doctor_uuid, disease, state
+  </sql>
+  <sql id="Blob_Column_List" >
+    result
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_medicalrecord
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectMedicalRecordsByPatientUUID" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_medicalrecord
+    where patient_uuid = #{patientUUID,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectMedicalRecordsByDoctorUUID" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_medicalrecord
+    where doctor_uuid = #{doctorUUID,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByDiseaseUuidAndYear" resultMap="BaseResultMap" >
+    select DATE_FORMAT(time,'%m') as time
+    from t_medicalrecord
+    where disease = #{0} and DATE_FORMAT(time,'%Y') = #{1}
+  </select>
+  
+  <select id="selectByMultipleDiseaseUuidAndYear" resultMap="BaseResultMap" >
+    select disease, DATE_FORMAT(time,'%m') as time
+    from t_medicalrecord
+    where disease in
+    <foreach collection="diseaseUuids" item="diseaseUuid" index="index" open="(" close=")" separator="," >  
+		    #{diseaseUuid,jdbcType=VARCHAR}
+	</foreach>
+    and DATE_FORMAT(time,'%Y') = #{year}
+  </select>
+  
+  <select id="selectMostFiveByPeriod" resultMap="PieResultMap" parameterType="java.lang.String" >
+  	select name, count(disease) as value from t_disease, t_medicalrecord 
+    where t_medicalrecord.disease = t_disease.uuid 
+    <if test="_parameter == 'thisMonth'">
+	    and DATE_FORMAT(time, '%Y%m') = DATE_FORMAT(CURDATE(), '%Y%m')
+    </if>
+    <if test="_parameter == 'lastMonth'">
+	    and PERIOD_DIFF( DATE_FORMAT(now(), '%Y%m') , DATE_FORMAT(time, '%Y%m') ) =1
+    </if>
+    <if test="_parameter == 'thisQuarter'">
+	    and QUARTER(time) = QUARTER(CURDATE()) and DATE_FORMAT(time, '%Y') = DATE_FORMAT(CURDATE(), '%Y')
+    </if>
+    <if test="_parameter == 'halfYear'">
+	    and time between date_sub(now(),interval 6 month) and now()
+    </if>
+    <if test="_parameter == 'thisYear'">
+	    and YEAR(time)=YEAR(NOW())
+    </if>
+    <if test="_parameter == 'lastYear'">
+	    and year(time) = year(date_sub(now(),interval 1 year))
+    </if>
+    
+	group by disease order by value desc limit 0,5
+    
+  </select>
+  
+  <select id="selectCountByPeriod" resultType="java.lang.Integer" parameterType="java.lang.String" >
+  	select count(disease) from t_medicalrecord where
+    <if test="_parameter == 'thisMonth'">
+	    DATE_FORMAT(time, '%Y%m') = DATE_FORMAT(CURDATE(), '%Y%m')
+    </if>
+    <if test="_parameter == 'lastMonth'">
+	    PERIOD_DIFF( DATE_FORMAT(now(), '%Y%m') , DATE_FORMAT(time, '%Y%m') ) =1
+    </if>
+    <if test="_parameter == 'thisQuarter'">
+	    QUARTER(time) = QUARTER(CURDATE()) and DATE_FORMAT(time, '%Y') = DATE_FORMAT(CURDATE(), '%Y')
+    </if>
+    <if test="_parameter == 'halfYear'">
+	    time between date_sub(now(),interval 6 month) and now()
+    </if>
+    <if test="_parameter == 'thisYear'">
+	    YEAR(time)=YEAR(NOW())
+    </if>
+    <if test="_parameter == 'lastYear'">
+	    year(time) = year(date_sub(now(),interval 1 year))
+    </if>
+  </select>
+  
+  <select id="selectByCondition" resultMap="MedicalRecordVOResultMap" parameterType="top.chsis.vo.MedicalRecordVO" >
+    select m.uuid, m.state, m.disease, m.result, r.name, r.sex, m.time, r.idNo from t_resident r, t_medicalrecord m
+    where 1=1
+    <if test="name!=null and name!=''">
+		and r.name LIKE CONCAT('%', #{name},'%' )
+	</if>
+    <if test="idNo!=null and idNo!=''">
+		and r.idNo LIKE CONCAT('%', #{idNo},'%' )
+	</if>
+    <if test="time!=null and time!=''">
+		and m.time LIKE CONCAT('%', #{time},'%' )
+	</if>
+    <if test="sex!=null and sex!=''">
+		and r.sex = #{sex}
+	</if>
+	and m.patient_uuid = r.uuid
+	and m.state = #{state}
+	and m.doctor_uuid = #{doctorUuid}
+  </select>
+  
+  <select id="selectByConditionInResident" resultMap="BaseResultMap" parameterType="top.chsis.model.MedicalRecord" >
+    select * from t_medicalrecord
+    where 1=1
+    <if test="time!=null and time!=''">
+		and time LIKE CONCAT('%', #{time},'%' )
+	</if>
+	<if test="disease !=null and disease.name !=''">
+		and disease in (select uuid from t_disease where name LIKE CONCAT('%', #{disease.name},'%' ) ) 
+	</if>
+	<if test="state!=null">
+		and state = #{state}
+	</if>
+	and patient_uuid = #{patient.uuid}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_medicalrecord
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="top.chsis.model.MedicalRecord" >
+    insert into t_medicalrecord (uuid, patient_uuid, time, 
+      doctor_uuid, disease, state, 
+      result)
+    values (#{uuid,jdbcType=VARCHAR}, #{patient.uuid,jdbcType=VARCHAR}, #{time,jdbcType=VARCHAR}, 
+      #{doctor.uuid,jdbcType=VARCHAR}, #{disease.uuid,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, 
+      #{result,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="top.chsis.model.MedicalRecord" >
+    insert into t_medicalrecord
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="patient != null" >
+        patient_uuid,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="doctor != null" >
+        doctor_uuid,
+      </if>
+      <if test="disease != null" >
+        disease,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="result != null" >
+        result,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="patient != null" >
+        #{patient.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="doctor != null" >
+        #{doctor.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="disease != null" >
+        #{disease.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="result != null" >
+        #{result,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.MedicalRecord" >
+    update t_medicalrecord
+    <set >
+      <if test="patient != null" >
+        patient_uuid = #{patient.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="doctor != null" >
+        doctor_uuid = #{doctor.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="disease != null" >
+        disease = #{disease.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="result != null" >
+        result = #{result,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.MedicalRecord" >
+    update t_medicalrecord
+    set patient_uuid = #{patient.uuid,jdbcType=VARCHAR},
+      time = #{time,jdbcType=VARCHAR},
+      doctor_uuid = #{doctor.uuid,jdbcType=VARCHAR},
+      disease = #{disease.uuid,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      result = #{result,jdbcType=LONGVARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.NewsMapper" >
+  <resultMap id="BaseResultMap" type="top.chsis.model.News" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="authorUuid" property="authorUuid" jdbcType="VARCHAR" />
+    <result column="authorType" property="authorType" jdbcType="INTEGER" />
+    <result column="authorName" property="authorName" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="submitTime" property="submitTime" jdbcType="VARCHAR" />
+    <result column="checkTime" property="checkTime" jdbcType="VARCHAR" />
+    <result column="publishTime" property="publishTime" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="click" property="click" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+    <association column="checker_uuid" property="checker" select="top.chsis.dao.ManagerMapper.selectByPrimaryKey" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    uuid, title, authorUuid, authorType, authorName, type, submitTime, checkTime, publishTime, 
+    state, content, click, checker_uuid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_news
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="top.chsis.model.News" >
+    select * from t_news
+    where 1=1
+	<if test="title!=null and title!=''">
+		and title LIKE CONCAT('%', #{title},'%' )
+	</if>
+	<if test="submitTime!=null and submitTime!=''">
+		and submitTime LIKE CONCAT('%', #{submitTime},'%' )
+	</if>
+	<if test="authorUuid!=null and authorUuid!=''">
+		and authorUuid = #{authorUuid}
+	</if>
+	<if test="type!=null">
+		and type = #{type}
+	</if>
+	<if test="state!=null">
+		and state = #{state}
+	</if>
+  </select>
+  
+  <select id="selectByConditionWithType" resultMap="BaseResultMap" parameterType="top.chsis.model.News" >
+    select * from t_news 
+    where 1=1
+    <if test="type!=null">
+		and type = #{type}
+	</if>
+    <if test="state!=null">
+		and state = #{state}
+	</if>
+	
+  </select>
+  
+  <select id="selectByClick" resultMap="BaseResultMap" parameterType="top.chsis.model.News" >
+    select * from t_news 
+    order by click desc limit 3
+  </select>
+  
+  <select id="selectByType" resultMap="BaseResultMap" parameterType="top.chsis.model.News" >
+    select * from t_news 
+    where type = #{type}
+    limit 6
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_news
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="top.chsis.model.News" >
+    insert into t_news (uuid, title, authorUuid, 
+      authorType, authorName, type, 
+      submitTime, checkTime, publishTime, 
+      state, click, checker_uuid, content
+      )
+    values (#{uuid,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{authorUuid,jdbcType=VARCHAR}, 
+      #{authorType,jdbcType=INTEGER}, #{authorName,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{submitTime,jdbcType=VARCHAR}, #{checkTime,jdbcType=VARCHAR}, #{publishTime,jdbcType=VARCHAR}, 
+      #{state,jdbcType=INTEGER}, #{click,jdbcType=INTEGER}, #{checker.uuid,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="top.chsis.model.News" >
+    insert into t_news
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="authorUuid != null" >
+        authorUuid,
+      </if>
+      <if test="authorType != null" >
+        authorType,
+      </if>
+      <if test="authorName != null" >
+        authorName,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="checkTime != null" >
+        checkTime,
+      </if>
+      <if test="publishTime != null" >
+        publishTime,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="click != null" >
+        click,
+      </if>
+      <if test="checker != null" >
+        checker_uuid,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="authorUuid != null" >
+        #{authorUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="authorType != null" >
+        #{authorType,jdbcType=INTEGER},
+      </if>
+      <if test="authorName != null" >
+        #{authorName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime != null" >
+        #{checkTime,jdbcType=VARCHAR},
+      </if>
+      <if test="publishTime != null" >
+        #{publishTime,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="click != null" >
+        #{click,jdbcType=INTEGER},
+      </if>
+      <if test="checker != null" >
+        #{checker.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.News" >
+    update t_news
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="authorUuid != null" >
+        authorUuid = #{authorUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="authorType != null" >
+        authorType = #{authorType,jdbcType=INTEGER},
+      </if>
+      <if test="authorName != null" >
+        authorName = #{authorName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime != null" >
+        checkTime = #{checkTime,jdbcType=VARCHAR},
+      </if>
+      <if test="publishTime != null" >
+        publishTime = #{publishTime,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="click != null" >
+        click = #{click,jdbcType=INTEGER},
+      </if>
+      <if test="checker != null" >
+        checker_uuid = #{checker.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="top.chsis.model.News" >
+    update t_news
+    set title = #{title,jdbcType=VARCHAR},
+      authorUuid = #{authorUuid,jdbcType=VARCHAR},
+      authorType = #{authorType,jdbcType=INTEGER},
+      authorName = #{authorName,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      submitTime = #{submitTime,jdbcType=VARCHAR},
+      checkTime = #{checkTime,jdbcType=VARCHAR},
+      publishTime = #{publishTime,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      click = #{click,jdbcType=INTEGER},
+      checker_uuid = #{checker.uuid,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.News" >
+    update t_news
+    set title = #{title,jdbcType=VARCHAR},
+      authorUuid = #{authorUuid,jdbcType=VARCHAR},
+      authorType = #{authorType,jdbcType=INTEGER},
+      authorName = #{authorName,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      submitTime = #{submitTime,jdbcType=VARCHAR},
+      checkTime = #{checkTime,jdbcType=VARCHAR},
+      publishTime = #{publishTime,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      click = #{click,jdbcType=INTEGER},
+      checker_uuid = #{checker.uuid,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

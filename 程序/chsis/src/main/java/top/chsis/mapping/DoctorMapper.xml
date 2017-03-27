@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.DoctorMapper" >
+  <resultMap id="BaseResultMap" type="top.chsis.model.Doctor" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="photo" property="photo" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="diploma" property="diploma" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+    <association column="department_uuid" property="department" select="top.chsis.dao.DepartmentMapper.selectByPrimaryKey" jdbcType="VARCHAR"></association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    uuid, userName, password, number, name, photo, sex, phone, diploma, title, department_uuid
+  </sql>
+  <sql id="Blob_Column_List" >
+    description
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_doctor
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="top.chsis.vo.DoctorVO" >
+    select d.* from t_doctor d, t_department dep, t_hospital h
+    where 1=1
+    <if test="uuid!=null and uuid!=''">
+		and d.uuid = #{uuid}
+	</if>
+    <if test="number!=null and number!=''">
+		and d.number LIKE CONCAT('%', #{number},'%' )
+	</if>
+    <if test="name!=null and name!=''">
+		and d.name LIKE CONCAT('%', #{name},'%' )
+	</if>
+    <if test="departmentName!=null and departmentName!=''">
+		and dep.name LIKE CONCAT('%', #{departmentName},'%' )
+	</if>
+	and d.department_uuid = dep.uuid 
+	and dep.hospital_uuid = h.uuid
+	and h.uuid = #{hospitalUuid}
+  </select>
+  
+  <select id="selectByNumber" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_doctor
+    where number = #{number,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_doctor
+    where userName = #{userName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectDoctorsByDepartmentUUID" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_doctor
+    where department_uuid = #{departmentUUID,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_doctor
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="top.chsis.model.Doctor" >
+    insert into t_doctor (uuid, userName, password, 
+      number, name, photo, 
+      sex, phone, diploma, 
+      title, department_uuid, description
+      )
+    values (#{uuid,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{number,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{photo,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{diploma,jdbcType=INTEGER}, 
+      #{title,jdbcType=INTEGER}, #{department.uuid,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="top.chsis.model.Doctor" >
+    insert into t_doctor
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="userName != null" >
+        userName,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="photo != null" >
+        photo,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="diploma != null" >
+        diploma,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="department_uuid != null" >
+        department_uuid,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="photo != null" >
+        #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="diploma != null" >
+        #{diploma,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=INTEGER},
+      </if>
+      <if test="department_uuid != null" >
+        #{department_uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.Doctor" >
+    update t_doctor
+    <set >
+      <if test="userName != null" >
+        userName = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="photo != null" >
+        photo = #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="diploma != null" >
+        diploma = #{diploma,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=INTEGER},
+      </if>
+      <if test="department != null" >
+        department_uuid = #{department.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.Doctor" >
+    update t_doctor
+    set userName = #{userName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      number = #{number,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      photo = #{photo,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      phone = #{phone,jdbcType=VARCHAR},
+      diploma = #{diploma,jdbcType=INTEGER},
+      title = #{title,jdbcType=INTEGER},
+      department_uuid = #{department.uuid,jdbcType=VARCHAR},
+      description = #{description,jdbcType=LONGVARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

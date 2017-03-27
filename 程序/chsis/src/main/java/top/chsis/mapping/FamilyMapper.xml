@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.FamilyMapper" >
+
+  <resultMap id="BaseResultMap" type="top.chsis.model.Family" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="householder_uuid" property="householderUUID" jdbcType="VARCHAR" />
+    <association column="community_uuid" property="community" select="top.chsis.dao.CommunityMapper.selectByPrimaryKey"></association>
+  </resultMap>
+  
+  <resultMap id="FamilyVOResultMap" type="top.chsis.vo.FamilyVO" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="householderName" property="householderName" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="communityName" property="communityName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    uuid, number, phone, address, householder_uuid, community_uuid
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_family
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectFamiliesByCommunityUUID" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_family
+    where community_uuid = #{communityUUID,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCondition" resultMap="FamilyVOResultMap" parameterType="top.chsis.vo.FamilyVO" >
+    select f.uuid, f.number, f.phone, r.name householderName, c.name communityName from t_family f, t_resident r, t_community c
+    where 1=1
+	<if test="number!=null and number!=''">
+		and f.number LIKE CONCAT('%', #{number},'%' )
+	</if>
+	<if test="householderName!=null and householderName!=''">
+		and r.name LIKE CONCAT('%', #{householderName},'%' )
+	</if>
+	<if test="communityName!=null and communityName!=''">
+		and c.name LIKE CONCAT('%', #{communityName},'%' )
+	</if>
+	and f.uuid = r.family_uuid
+	and f.community_uuid = c.uuid
+	and r.uuid = f.householder_uuid
+  </select>
+  
+  <select id="selectByNumber" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_family
+    where number = #{number,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_family
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="top.chsis.model.Family" >
+    insert into t_family (uuid, number, phone, 
+      address, householder_uuid, community_uuid
+      )
+    values (#{uuid,jdbcType=VARCHAR}, #{number,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{householderUUID,jdbcType=VARCHAR}, #{community.uuid,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="top.chsis.model.Family" >
+    insert into t_family
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="householderUUID != null" >
+        householderUUID,
+      </if>
+      <if test="community != null" >
+        community.uuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="householderUUID != null" >
+        #{householderUUID,jdbcType=VARCHAR},
+      </if>
+      <if test="community != null" >
+        #{community.uuid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.Family" >
+    update t_family
+    <set >
+      <if test="number != null" >
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="householderUUID != null" >
+        householder_uuid = #{householderUUID,jdbcType=VARCHAR},
+      </if>
+      <if test="community != null" >
+        community_uuid = #{community.uuid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.Family" >
+    update t_family
+    set number = #{number,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      householder_uuid = #{householderUUID,jdbcType=VARCHAR},
+      community_uuid = #{community.uuid,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

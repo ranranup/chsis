@@ -1,0 +1,9 @@
+[
+  { "name":"婴幼儿", "value":"0" },
+  { "name":"儿童", "value":"1"  },
+  { "name":"青少年", "value":"2" },
+  { "name":"青年", "value":"3" },
+  { "name":"中年", "value":"4" },
+  { "name":"中老年", "value":"5" },
+  { "name":"老年", "value":"6" }
+]

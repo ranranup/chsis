@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.CheckRecordMapper" >
+  <resultMap id="BaseResultMap" type="top.chsis.model.CheckRecord" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="newsUuid" property="newsUuid" jdbcType="VARCHAR" />
+    <result column="result" property="result" jdbcType="INTEGER" />
+    <result column="reason" property="reason" jdbcType="INTEGER" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <association column="checker_uuid" property="checker" select="top.chsis.dao.ManagerMapper.selectByPrimaryKey" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    uuid, newsUuid, checker_uuid, result, reason, time
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_checkrecord
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByNewsUuid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_checkrecord
+    where newsUuid = #{newsUuid,jdbcType=VARCHAR}
+    order by time desc
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_checkrecord
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="top.chsis.model.CheckRecord" >
+    insert into t_checkrecord (uuid, newsUuid, checker_uuid, 
+      result, reason, time
+      )
+    values (#{uuid,jdbcType=VARCHAR}, #{newsUuid,jdbcType=VARCHAR}, #{checker.uuid,jdbcType=VARCHAR}, 
+      #{result,jdbcType=INTEGER}, #{reason,jdbcType=INTEGER}, #{time,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="top.chsis.model.CheckRecord" >
+    insert into t_checkrecord
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="newsUuid != null" >
+        newsUuid,
+      </if>
+      <if test="checker != null" >
+        checker_uuid,
+      </if>
+      <if test="result != null" >
+        result,
+      </if>
+      <if test="reason != null" >
+        reason,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="newsUuid != null" >
+        #{newsUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="checker != null" >
+        #{checker.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null" >
+        #{result,jdbcType=INTEGER},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.CheckRecord" >
+    update t_checkrecord
+    <set >
+      <if test="newsUuid != null" >
+        newsUuid = #{newsUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="checker != null" >
+        checker_uuid = #{checker.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null" >
+        result = #{result,jdbcType=INTEGER},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.CheckRecord" >
+    update t_checkrecord
+    set newsUuid = #{newsUuid,jdbcType=VARCHAR},
+      checker_uuid = #{checker.uuid,jdbcType=VARCHAR},
+      result = #{result,jdbcType=INTEGER},
+      reason = #{reason,jdbcType=INTEGER},
+      time = #{time,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

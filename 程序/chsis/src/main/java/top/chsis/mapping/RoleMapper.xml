@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.IRoleMapper" >
+  <resultMap id="BaseResultMap" type="top.chsis.model.Role" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="cName" property="cName" jdbcType="VARCHAR" />
+    <result column="eName" property="eName" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    uuid, cName, eName, description
+  </sql>
+  
+  <select id="selectByCName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role
+    where cName = #{cName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByEName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role
+    where eName = #{eName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="top.chsis.model.Role" >
+   		select * from t_role
+		where 1=1
+		<if test="cName!=null and cName!=''">
+		and cName LIKE CONCAT('%', #{cName},'%' )
+		</if>
+		<if test="eName!=null and eName!=''">
+		and eName LIKE CONCAT('%', #{eName},'%' )
+		</if>
+		<if test="description!=null and description!=''">
+		and description LIKE CONCAT('%', #{description},'%' )
+		</if>
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role
+  </select>
+  
+  <select id="selectCommon" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role 
+    where description != '%SystemRole%'
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_role
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="top.chsis.model.Role" >
+    insert into t_role (uuid, cName, eName, 
+      description)
+    values (#{uuid,jdbcType=VARCHAR}, #{cName,jdbcType=VARCHAR}, #{eName,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="top.chsis.model.Role" >
+    insert into t_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="cName != null" >
+        cName,
+      </if>
+      <if test="eName != null" >
+        eName,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="cName != null" >
+        #{cName,jdbcType=VARCHAR},
+      </if>
+      <if test="eName != null" >
+        #{eName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.Role" >
+    update t_role
+    <set >
+      <if test="cName != null" >
+        cName = #{cName,jdbcType=VARCHAR},
+      </if>
+      <if test="eName != null" >
+        eName = #{eName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.Role" >
+    update t_role
+    set cName = #{cName,jdbcType=VARCHAR},
+      eName = #{eName,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

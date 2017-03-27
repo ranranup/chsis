@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.HospitalManagerMapper" >
+
+  <resultMap id="BaseResultMap" type="top.chsis.model.HospitalManager" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <association column="managerUuid" property="manager" select="top.chsis.dao.ManagerMapper.selectByPrimaryKey" />
+    <association column="hospitalUuid" property="hospital" select="top.chsis.dao.HospitalMapper.selectByPrimaryKey" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    uuid, managerUuid, hospitalUuid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_hospital_manager
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_hospital_manager
+  </select>
+  
+  <select id="selectByHospitalUuid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_hospital_manager
+    where hospitalUuid = #{hospitalUuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByManagerUuid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_hospital_manager
+    where managerUuid = #{managerUuid,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_hospital_manager
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="top.chsis.model.HospitalManager" >
+    insert into t_hospital_manager (uuid, managerUuid, hospitalUuid
+      )
+    values (#{uuid,jdbcType=VARCHAR}, #{manager.uuid,jdbcType=VARCHAR}, #{hospital.uuid,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="top.chsis.model.HospitalManager" >
+    insert into t_hospital_manager
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="manager.uuid != null" >
+        manager.uuid,
+      </if>
+      <if test="hospital.uuid != null" >
+        hospital.uuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="manager.uuid != null" >
+        #{manager.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="hospital.uuid != null" >
+        #{hospital.uuid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.HospitalManager" >
+    update t_hospital_manager
+    <set >
+      <if test="manager.uuid != null" >
+        managerUuid = #{manager.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="hospital.uuid != null" >
+        hospitalUuid = #{hospital.uuid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.HospitalManager" >
+    update t_hospital_manager
+    set managerUuid = #{manager.uuid,jdbcType=VARCHAR},
+      hospitalUuid = #{hospital.uuid,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

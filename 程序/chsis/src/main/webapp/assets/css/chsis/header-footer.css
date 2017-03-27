@@ -1,0 +1,92 @@
+/*--header start here--*/
+.header {
+	background: url(../../image/chsis/header-back.JPG);
+	min-height: 120px;
+}
+.head-nav-back{
+	background: url(../../image/chsis/header-container.PNG) no-repeat;
+	background-size:100%;
+	-webkit-background-size:100%;
+	height:120px;
+}
+.header-main {
+	padding: 3em 0px;
+}
+.navg ul {
+	list-style: none;
+}
+.navg ul li {
+	display: inline-block;
+	margin: 0px 5px 0px 0px;
+}
+.navg ul li a {
+	font-size: 1em;
+	font-weight: 400;
+	color: #999;
+	padding: 4em 1.6em;
+	text-decoration:none;
+}
+
+a.ser.active {
+	padding: 4em .9em;
+}
+
+.navg ul li a:hover{
+	color:#fff;
+}
+.navg ul li a.active{
+	text-decoration:none;
+	color:#fff;
+	background: url(../../image/chsis/nav-back.png)no-repeat 0px 2px;
+	background-size:initial;
+	transition: 0.5s all;
+	-webkit-transition: 0.5s all;
+	-moz-transition:  0.5s all;
+	-o-transition:  0.5s all;
+}
+span.menu{
+	display: none;
+}
+.logo {
+	float: left;
+	text-align:center;
+	position : absolute;
+	top:2.3em;
+}
+.navg {
+	float: right;
+	text-align: center;
+}
+/*--header end here--*/
+
+.copyrights{text-indent:-9999px;height:0;line-height:0;font-size:0;overflow:hidden;}
+/*--copyright start here--*/
+.copyright {
+	background: url(../../image/chsis/copyrt-bg.jpg);
+	padding: 2em 0px;
+	text-align:center;
+	background-size: cover;
+	-webkit-background-size:cover;
+	-moz-background-size:cover;
+	-o-background-size:cover;
+	-ms-background-size:cove;
+}
+.copyright-main p {
+	font-size: 1em;
+	font-weight: 600;
+	color: #2E383F;
+}
+.copyright-main p a {
+	font-size: 1em;
+	font-weight: 600;
+	color: #2E383F;
+}
+.copyright-main p a:hover{
+	text-decoration:none;
+	color:#0B81BB;
+	transition: 0.5s all;
+ -webkit-transition: 0.5s all;
+ -moz-transition:  0.5s all;
+ -o-transition:  0.5s all;
+}
+/*--copyright end here--*/ 

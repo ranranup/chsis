@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.IResourceMapper">
+	<resultMap id="BaseResultMap" type="top.chsis.model.Resource">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		uuid, name, url, description
+	</sql>
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from t_resource
+		where uuid = #{uuid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByURL" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from t_resource
+		where url = #{url,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from t_resource
+		where name = #{name,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectAll" resultMap="BaseResultMap" >
+		select
+		<include refid="Base_Column_List" />
+		from t_resource
+	</select>
+	
+	<select id="selectByCondition" resultMap="BaseResultMap" parameterType="top.chsis.model.Resource">
+		select * from t_resource
+		where 1=1
+		<if test="name!=null and name!=''">
+		and name LIKE CONCAT('%', #{name},'%' )
+		</if>
+		<if test="url!=null and url!=''">
+		and url LIKE CONCAT('%', #{url},'%' )
+		</if>
+		<if test="description!=null and description!=''">
+		and description LIKE CONCAT('%', #{description},'%' )
+		</if>
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from t_resource
+		where uuid = #{uuid,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="top.chsis.model.Resource">
+		insert into t_resource (uuid, name, url,
+		description)
+		values (#{uuid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="top.chsis.model.Resource">
+		insert into t_resource
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="url != null">
+				url,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				#{url,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.Resource">
+		update t_resource
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				description = #{description,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where uuid = #{uuid,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="top.chsis.model.Resource">
+		update t_resource
+		set name = #{name,jdbcType=VARCHAR},
+		url = #{url,jdbcType=VARCHAR},
+		description = #{description,jdbcType=VARCHAR}
+		where uuid = #{uuid,jdbcType=VARCHAR}
+	</update>
+</mapper>

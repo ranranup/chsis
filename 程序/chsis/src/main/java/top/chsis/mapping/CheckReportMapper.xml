@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.chsis.dao.CheckReportMapper" >
+  <resultMap id="BaseResultMap" type="top.chsis.model.CheckReport" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+    <association column="patient_uuid" property="patient" select="top.chsis.dao.ResidentMapper.selectByPrimaryKey"></association>
+    <association column="hospital_uuid" property="hospital" select="top.chsis.dao.HospitalMapper.selectByPrimaryKey"></association>
+    <association column="medicalrecord_uuid" property="medicalRecord" select="top.chsis.dao.MedicalRecordMapper.selectByPrimaryKey"></association>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    uuid, name, time, patient_uuid, hospital_uuid, state, url,medicalrecord_uuid
+  </sql>
+  <sql id="Blob_Column_List" >
+    description
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_checkreport
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCheckReportsByPatientUUID" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_checkreport
+    where patient_uuid = #{patientUUID,jdbcType=VARCHAR}
+    and name = "体检"
+  </select>
+  <select id="selectCheckReportsByHospitalUUID" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_checkreport
+    where hospital_uuid = #{hospitalUUID,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCheckReportsByMedicalRecordUUID" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_checkreport
+    where medicalrecord_uuid = #{medicalrecordUUID,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByConditionInResident" resultMap="BaseResultMap" parameterType="top.chsis.model.CheckReport" >
+    select * from t_checkreport
+    where 1=1
+    <if test="time!=null and time!=''">
+		and time LIKE CONCAT('%', #{time},'%' )
+	</if>
+	and patient_uuid = #{patient.uuid}
+	and name = "体检"
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_checkreport
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="top.chsis.model.CheckReport" >
+    insert into t_checkreport (uuid, name, time, 
+      patient_uuid, hospital_uuid, state, 
+      url, description, medicalRecord_uuid)
+    values (#{uuid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{time,jdbcType=VARCHAR}, 
+      #{patient.uuid,jdbcType=VARCHAR}, #{hospital.uuid,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, 
+      #{url,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{medicalRecord.uuid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="top.chsis.model.CheckReport" >
+    insert into t_checkreport
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="patient != null" >
+        patient_uuid,
+      </if>
+      <if test="hospital != null" >
+        hospital_uuid,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="medicalRecord != null" >
+        medicalRecord.uuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="patient != null" >
+        #{patient.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="hospital != null" >
+        #{hospital.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="medicalRecord != null" >
+        medicalRecord.uuid,
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.chsis.model.CheckReport" >
+    update t_checkreport
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="patient != null" >
+        patient_uuid = #{patient.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="hospital != null" >
+        hospital_uuid = #{hospital.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="medicalRecord != null" >
+        medicalRecord_uuid = #{medicalRecord.uuid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="top.chsis.model.CheckReport" >
+    update t_checkreport
+    set name = #{name,jdbcType=VARCHAR},
+      time = #{time,jdbcType=VARCHAR},
+      patient_uuid = #{patient.uuid,jdbcType=VARCHAR},
+      hospital_uuid = #{hospital.uuid,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      url = #{url,jdbcType=VARCHAR},
+      description = #{description,jdbcType=LONGVARCHAR},
+      medicalRecord_uuid = #{medicalRecord.uuid,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>
